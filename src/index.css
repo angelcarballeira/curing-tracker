@@ -1,0 +1,5 @@
+@import "tailwindcss";
+
+/* Dark mode is controlled by a "dark" class on <html>,
+   so we can toggle it manually instead of only following the OS. */
+@custom-variant dark (&:where(.dark, .dark *));
