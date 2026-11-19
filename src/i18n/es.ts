@@ -1,5 +1,6 @@
-// All user-facing text lives here. Code stays in English, UI stays in Spanish.
-// Texts that need values (like "3 days") are functions, not strings.
+
+import type { CuringMethod } from '../features/pieces/types'
+
 export const es = {
   appName: 'Control de Curado',
   nav: {
@@ -28,8 +29,35 @@ export const es = {
       `Pérdida de peso: ${pct} % de ${target} %`,
     noWeighIns: 'Todavía sin pesajes',
   },
+
   newPiece: {
     title: 'Nueva pieza',
-    comingSoon: 'El formulario llega en el próximo paso.',
+    type: 'Tipo de pieza',
+    typePlaceholder: 'Elegí un tipo',
+    addType: '+ Agregar otro tipo',
+    newTypeLabel: 'Nombre del nuevo tipo',
+    weight: 'Peso (kg)',
+    thickness: 'Grosor (cm)',
+    thicknessHint: 'Opcional, pero mejora mucho la estimación del curado.',
+    method: 'Método de curado',
+    startDate: 'Inicio del curado',
+    estimatedHours: 'Horas de curado',
+    estimateRange: (min: number, max: number, days: string) =>
+      `Rango estimado: ${min} a ${max} h (${days} días)`,
+    estimateFromWeight:
+      'Estimación aproximada solo con el peso (24 h por kg). Agrega el grosor para un cálculo mejor.',
+    restoreSuggestion: 'Usar valor sugerido',
+    detail: 'Detalles del curado',
+    detailHint: 'Por ejemplo: cantidad de sal, azúcar, salitre, especias.',
+    save: 'Guardar pieza',
+    saving: 'Guardando...',
   },
+  curingMethods: {
+    'dry-salt': 'Solo sal',
+    'salt-sugar': 'Sal y azúcar',
+    'salt-nitrite': 'Sal y salitre',
+    brine: 'Salmuera',
+    other: 'Otro',
+  } satisfies Record<CuringMethod, string>,
 }
+
