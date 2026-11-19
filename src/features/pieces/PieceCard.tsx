@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { formatDistanceToNowStrict } from 'date-fns'
 import { es as esLocale } from 'date-fns/locale'
@@ -5,10 +6,8 @@ import { db } from '../../db/db'
 import { es } from '../../i18n/es'
 import { calculateCuringEndDate } from '../../lib/curing'
 import { calculateWeightLossPct } from '../../lib/drying'
-import type { Piece } from './types'
-
-import { Link } from 'react-router-dom'
 import { STATUS_STYLES } from './statusStyles'
+import type { Piece } from './types'
 
 function CuringInfo({ piece }: { piece: Piece }) {
   const end = calculateCuringEndDate(
@@ -63,18 +62,24 @@ function DryingInfo({ piece }: { piece: Piece }) {
 
 export default function PieceCard({ piece }: { piece: Piece }) {
   return (
+    // The whole card is a real link, so the back button and keyboard work.
     <Link
       to={`/pieces/${piece.id}`}
       className="block rounded-xl border border-stone-200 bg-white p-4 shadow-sm hover:border-emerald-500 dark:border-stone-700 dark:bg-stone-800"
     >
       <div className="mb-2 flex items-start justify-between gap-2">
         <div>
+          <p className="font-mono text-xs text-stone-500 dark:text-stone-400">
+            {piece.code}
+          </p>
           <h2 className="font-semibold">{piece.type}</h2>
           <p className="text-sm text-stone-500 dark:text-stone-400">
             {(piece.initialWeightG / 1000).toFixed(2)} kg
           </p>
         </div>
-        <span className={`rounded-full px-3 py-1 text-xs font-medium ${STATUS_STYLES[piece.status]}`}>
+        <span
+          className={`rounded-full px-3 py-1 text-xs font-medium ${STATUS_STYLES[piece.status]}`}
+        >
           {es.status[piece.status]}
         </span>
       </div>
@@ -84,6 +89,3 @@ export default function PieceCard({ piece }: { piece: Piece }) {
     </Link>
   )
 }
-
-
-

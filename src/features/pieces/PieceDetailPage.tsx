@@ -5,10 +5,12 @@ import { db } from '../../db/db'
 import { es } from '../../i18n/es'
 import { calculateCuringEndDate } from '../../lib/curing'
 import { calculateTargetWeightG } from '../../lib/drying'
+// import CodeEditor from './CodeEditor'
 import StartDryingForm from './StartDryingForm'
 import WeighInSection from './WeightInSection'
 import { deletePiece, markReady } from './repository'
 import { STATUS_STYLES } from './statusStyles'
+import CodeEditor from './codeEditor'
 
 const formatDate = (iso: string) => format(new Date(iso), 'dd/MM/yyyy HH:mm')
 
@@ -69,28 +71,58 @@ export default function PieceDetailPage() {
       </Link>
 
       <div className="flex items-start justify-between gap-2">
-        <h1 className="text-2xl font-bold">{piece.type}</h1>
-        <span className={`rounded-full px-3 py-1 text-xs font-medium ${STATUS_STYLES[piece.status]}`}>
+        <div>
+          <h1 className="text-2xl font-bold">{piece.type}</h1>
+          <CodeEditor pieceId={piece.id} code={piece.code} />
+        </div>
+        <span
+          className={`rounded-full px-3 py-1 text-xs font-medium ${STATUS_STYLES[piece.status]}`}
+        >
           {es.status[piece.status]}
         </span>
       </div>
 
       <dl className="grid gap-3 rounded-xl border border-stone-200 p-4 text-sm sm:grid-cols-2 dark:border-stone-700">
-        <InfoRow label={es.detail.initialWeight} value={`${(piece.initialWeightG / 1000).toFixed(2)} kg`} />
-        <InfoRow label={es.detail.thickness} value={piece.thicknessCm ? `${piece.thicknessCm} cm` : undefined} />
-        <InfoRow label={es.detail.method} value={es.curingMethods[piece.curing.method]} />
-        <InfoRow label={es.detail.curingStart} value={formatDate(piece.curing.startDate)} />
-        <InfoRow label={es.detail.curingEnd} value={formatDate(curingEnd.toISOString())} />
+        <InfoRow
+          label={es.detail.initialWeight}
+          value={`${(piece.initialWeightG / 1000).toFixed(2)} kg`}
+        />
+        <InfoRow
+          label={es.detail.thickness}
+          value={piece.thicknessCm ? `${piece.thicknessCm} cm` : undefined}
+        />
+        <InfoRow
+          label={es.detail.method}
+          value={es.curingMethods[piece.curing.method]}
+        />
+        <InfoRow
+          label={es.detail.curingStart}
+          value={formatDate(piece.curing.startDate)}
+        />
+        <InfoRow
+          label={es.detail.curingEnd}
+          value={formatDate(curingEnd.toISOString())}
+        />
         <InfoRow label={es.detail.curingDetail} value={piece.curing.detail} />
         {piece.drying && (
           <>
             <InfoRow label={es.detail.dryingType} value={piece.drying.type} />
-            <InfoRow label={es.detail.dryingStart} value={formatDate(piece.drying.startDate)} />
+            <InfoRow
+              label={es.detail.dryingStart}
+              value={formatDate(piece.drying.startDate)}
+            />
             <InfoRow label={es.detail.seasoning} value={piece.drying.seasoning} />
-            <InfoRow label={es.detail.targetLoss} value={target ? `${target} %` : undefined} />
+            <InfoRow
+              label={es.detail.targetLoss}
+              value={target ? `${target} %` : undefined}
+            />
             <InfoRow
               label={es.detail.targetWeight}
-              value={target ? `${calculateTargetWeightG(piece.initialWeightG, target)} g` : undefined}
+              value={
+                target
+                  ? `${calculateTargetWeightG(piece.initialWeightG, target)} g`
+                  : undefined
+              }
             />
           </>
         )}

@@ -106,5 +106,13 @@ export const es = {
     remove: 'Borrar pesaje',
     targetReached: '¡Alcanzó la pérdida objetivo!',
   },
+  label: {
+    title: 'Etiqueta',
+    hint: 'Código para identificar la pieza. Podés escribirlo en la etiqueta física.',
+    taken: 'Ya existe otra pieza con esa etiqueta.',
+    edit: 'Editar etiqueta',
+    save: 'Guardar',
+    cancel: 'Cancelar',
+  },
 }
 

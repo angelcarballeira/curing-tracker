@@ -12,6 +12,7 @@ export type CuringMethod =
 
 export interface Piece {
   id: string
+  code: string // unique, human-readable, generated from type and a number
   userId?: string // empty for now; will be filled when login exists
   type: string // "Bondiola", "Lomito", or any custom type
   initialWeightG: number
@@ -53,6 +54,10 @@ export interface WeighIn {
 // Entries for the user-editable lists (piece types, drying types).
 export type OptionKind = 'pieceType' | 'dryingType'
 
+export type NewPiece = Omit<Piece, 'id' | 'code' | 'createdAt' | 'updatedAt'> & {
+  code?: string
+}
+
 export interface Option {
   id: string
   kind: OptionKind
@@ -61,5 +66,4 @@ export interface Option {
 
 // When creating a record, the app generates id and timestamps itself,
 // so the forms should not have to provide them.
-export type NewPiece = Omit<Piece, 'id' | 'createdAt' | 'updatedAt'>
 export type NewWeighIn = Omit<WeighIn, 'id'>

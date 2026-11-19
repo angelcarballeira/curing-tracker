@@ -1,11 +1,13 @@
 import { useMemo, useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useLiveQuery } from 'dexie-react-hooks'
 import { format } from 'date-fns'
 import Field, { inputClass } from '../../components/Field'
 import { es } from '../../i18n/es'
 import { calculateCuringEstimate } from '../../lib/curing'
+import { generatePieceCode } from '../../lib/pieceCode'
 import { useOptions } from '../settings/useOptions'
-import { addOption, createPiece } from './repository'
+import { addOption, createPiece, getAllCodes, isCodeTaken } from './repository'
 import type { CuringMethod } from './types'
 
 // Special value of the <select> that means "I want to type a new type".
@@ -37,6 +39,18 @@ export default function NewPiecePage() {
   const [detail, setDetail] = useState('')
   const [isSaving, setIsSaving] = useState(false)
 
+  // Label (code) state: same "suggestion unless edited" pattern as the hours.
+  const [codeOverride, setCodeOverride] = useState<string | null>(null)
+  const [codeError, setCodeError] = useState(false)
+  const existingCodes = useLiveQuery(getAllCodes, [])
+
+  // The type that is currently chosen, whether from the list or typed.
+  const currentType = type === NEW_TYPE ? newType : type
+  const suggestedCode = currentType
+    ? generatePieceCode(currentType, existingCodes ?? [])
+    : ''
+  const code = (codeOverride ?? suggestedCode).trim().toUpperCase()
+
   // Convert the text the user typed into numbers (0 if empty or invalid).
   const weightG = Math.round((Number(weightKg) || 0) * 1000)
   const thickness = Number(thicknessCm) || undefined
@@ -56,6 +70,14 @@ export default function NewPiecePage() {
     event.preventDefault() // stop the browser from reloading the page
     setIsSaving(true)
 
+    // Friendly check before saving. The unique index in the database
+    // is the safety net if this check ever misses something.
+    if (code && (await isCodeTaken(code))) {
+      setCodeError(true)
+      setIsSaving(false) // let the user fix it and try again
+      return
+    }
+
     const finalType = type === NEW_TYPE ? newType.trim() : type
 
     // Save a brand-new type to the list, so it appears next time.
@@ -67,6 +89,7 @@ export default function NewPiecePage() {
     }
 
     await createPiece({
+      code,
       type: finalType,
       initialWeightG: weightG,
       thicknessCm: thickness,
@@ -118,6 +141,23 @@ export default function NewPiecePage() {
           />
         </Field>
       )}
+
+      <Field label={es.label.title} htmlFor="code" hint={es.label.hint}>
+        <input
+          id="code"
+          value={codeOverride ?? suggestedCode}
+          onChange={(e) => {
+            setCodeOverride(e.target.value)
+            setCodeError(false)
+          }}
+          className={inputClass}
+        />
+        {codeError && (
+          <p className="mt-1 text-xs text-red-600 dark:text-red-400">
+            {es.label.taken}
+          </p>
+        )}
+      </Field>
 
       {/* Two columns from 640 px up, one column on phones. */}
       <div className="grid gap-4 sm:grid-cols-2">

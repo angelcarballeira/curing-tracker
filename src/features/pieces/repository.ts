@@ -1,4 +1,6 @@
 import { db } from '../../db/db'
+import { generatePieceCode } from '../../lib/pieceCode'
+
 import type {
   NewPiece,
   NewWeighIn,
@@ -7,12 +9,33 @@ import type {
 } from './types'
 
 const now = () => new Date().toISOString()
+export async function getAllCodes(): Promise<string[]> {
+  return (await db.pieces.toArray()).map((piece) => piece.code)
+}
+
+// Is this label used by another piece? "exceptId" lets a piece keep its own.
+export async function isCodeTaken(
+  code: string,
+  exceptId?: string,
+): Promise<boolean> {
+  const found = await db.pieces.where('code').equals(code).first()
+  return found !== undefined && found.id !== exceptId
+}
 
 export async function createPiece(data: NewPiece): Promise<string> {
   const id = crypto.randomUUID()
-  await db.pieces.add({ ...data, id, createdAt: now(), updatedAt: now() })
+  // The transaction makes "read the codes" and "save the piece" one step,
+  // so a code can't be taken by someone else in between.
+  await db.transaction('rw', db.pieces, async () => {
+    const code =
+      data.code?.trim().toUpperCase() ||
+      generatePieceCode(data.type, await getAllCodes())
+    await db.pieces.add({ ...data, code, id, createdAt: now(), updatedAt: now() })
+  })
   return id
 }
+
+
 
 // Partial<> means we can send only the fields that changed.
 export async function updatePiece(
