@@ -41,3 +41,18 @@ export async function addOption(
 ): Promise<void> {
   await db.options.add({ id: crypto.randomUUID(), kind, label: label.trim() })
 }
+
+export async function startDrying(
+  id: string,
+  drying: NonNullable<Piece['drying']>,
+): Promise<void> {
+  await updatePiece(id, { status: 'drying', drying })
+}
+
+export async function markReady(id: string): Promise<void> {
+  await updatePiece(id, { status: 'ready' })
+}
+
+export async function deleteWeighIn(id: string): Promise<void> {
+  await db.weighIns.delete(id)
+}

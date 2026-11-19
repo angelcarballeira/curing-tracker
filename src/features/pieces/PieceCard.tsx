@@ -7,11 +7,8 @@ import { calculateCuringEndDate } from '../../lib/curing'
 import { calculateWeightLossPct } from '../../lib/drying'
 import type { Piece } from './types'
 
-const STATUS_STYLES = {
-  curing: 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300',
-  drying: 'bg-sky-100 text-sky-800 dark:bg-sky-900/40 dark:text-sky-300',
-  ready: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300',
-} as const
+import { Link } from 'react-router-dom'
+import { STATUS_STYLES } from './statusStyles'
 
 function CuringInfo({ piece }: { piece: Piece }) {
   const end = calculateCuringEndDate(
@@ -66,7 +63,10 @@ function DryingInfo({ piece }: { piece: Piece }) {
 
 export default function PieceCard({ piece }: { piece: Piece }) {
   return (
-    <article className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm dark:border-stone-700 dark:bg-stone-800">
+    <Link
+      to={`/pieces/${piece.id}`}
+      className="block rounded-xl border border-stone-200 bg-white p-4 shadow-sm hover:border-emerald-500 dark:border-stone-700 dark:bg-stone-800"
+    >
       <div className="mb-2 flex items-start justify-between gap-2">
         <div>
           <h2 className="font-semibold">{piece.type}</h2>
@@ -81,6 +81,9 @@ export default function PieceCard({ piece }: { piece: Piece }) {
 
       {piece.status === 'curing' && <CuringInfo piece={piece} />}
       {piece.status === 'drying' && <DryingInfo piece={piece} />}
-    </article>
+    </Link>
   )
 }
+
+
+
