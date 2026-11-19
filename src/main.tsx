@@ -1,13 +1,13 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import App from './App.tsx'
+import App from './App'
 
-import { db } from './db/db'
-
-// TEMPORARY: force the database to open so we can inspect it in DevTools.
-// We'll remove this once the screens query the database themselves.
-db.open().then(() => console.log('Database opened:', db.tables.map((t) => t.name)))
+// Dev-only helper to fill the app with demo data (see src/dev/seed.ts).
+// import.meta.env.DEV is false in production builds, so this is removed there.
+if (import.meta.env.DEV) {
+  import('./dev/seed')
+}
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
