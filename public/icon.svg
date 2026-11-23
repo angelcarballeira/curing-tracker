@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#1c1917"/>
+  <!-- the string the piece hangs from -->
+  <line x1="256" y1="70" x2="256" y2="180" stroke="#d6d3d1" stroke-width="14" stroke-linecap="round"/>
+  <!-- the piece of meat -->
+  <ellipse cx="256" cy="290" rx="150" ry="100" fill="#b91c1c"/>
+  <ellipse cx="256" cy="290" rx="150" ry="100" fill="none" stroke="#fecaca" stroke-width="10" stroke-dasharray="4 22" stroke-linecap="round" opacity="0.6"/>
+</svg>
